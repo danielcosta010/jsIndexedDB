@@ -1,2 +1,2 @@
 # jsIndexedDB
- Salvando dados localmente com indexedDB
+ Curso da alura. Salvando dados localmente com indexedDB
