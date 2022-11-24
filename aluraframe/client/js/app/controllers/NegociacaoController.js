@@ -11,7 +11,7 @@ class NegociacaoController {
         this._listaNegociacoes = new Bind(
             new ListaNegociacoes(), 
             new NegociacoesView($('#negociacoesView')), 
-            'adiciona', 'esvazia', 'ordena', 'inverteOrdem');
+            'adiciona', 'esvazia' , 'ordena', 'inverteOrdem');
        
         this._mensagem = new Bind(
             new Mensagem(), new MensagemView($('#mensagemView')),
@@ -23,28 +23,27 @@ class NegociacaoController {
 
         this._init();
 
-        
     }
     
     _init() {
 
         this._service
             .lista()
-            .then(negociacoes =>
-                negociacoes.forEach(negociacao =>
+            .then(negociacoes => 
+                negociacoes.forEach(negociacao => 
                     this._listaNegociacoes.adiciona(negociacao)))
             .catch(erro => this._mensagem.texto = erro);
-    
-    
-        setInterval(() => {
-            this.importaNegociacoes();
-        }, 3000);
+
+       setInterval(() => {
+           this.importaNegociacoes();
+       }, 3000);                
+        
     }
-    
+
     adiciona(event) {
-
+        
         event.preventDefault();
-
+        
         let negociacao = this._criaNegociacao();
 
         this._service
@@ -55,30 +54,28 @@ class NegociacaoController {
                 this._limpaFormulario();
             })
             .catch(erro => this._mensagem.texto = erro);
-
     }
     
     importaNegociacoes() {
-        
+
         this._service
             .importa(this._listaNegociacoes.negociacoes)
             .then(negociacoes => negociacoes.forEach(negociacao => {
                 this._listaNegociacoes.adiciona(negociacao);
                 this._mensagem.texto = 'Negociações do período importadas'   
             }))
-            .catch(erro => this._mensagem.texto = erro);                   
+            .catch(erro => this._mensagem.texto = erro);                              
     }
     
     apaga() {
-
-            this._service
-                .apaga()
-                .then(mensagem => {
-                    this._mensagem.texto = mensagem;
-                    this._listaNegociacoes.esvazia();
-                })
-                .catch(erro => this._mensagem.texto = erro);
         
+        this._service
+            .apaga()
+            .then(mensagem => {
+                this._mensagem.texto = mensagem;
+                this._listaNegociacoes.esvazia();                
+            })
+            .catch(erro => this._mensage.texto = erro);
     }
     
     _criaNegociacao() {
@@ -96,6 +93,7 @@ class NegociacaoController {
         this._inputValor.value = 0.0;
         this._inputData.focus();   
     }
+    
     ordena(coluna) {
         
         if(this._ordemAtual == coluna) {
