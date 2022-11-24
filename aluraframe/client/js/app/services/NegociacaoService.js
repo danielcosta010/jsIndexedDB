@@ -102,5 +102,17 @@ class NegociacaoService {
                     throw new Error('Não foi possível obter as negociações')
                   })
       }
+
+    apaga() {
+
+    ConnectionFactory
+        .getConnection()
+        .then(connection => new NegociacaoDao(connection))
+        .then(dao => dao.apagaTodos())
+        .then(mensagem => {
+            this._mensagem.texto = mensagem;
+            this._listaNegociacoes.esvazia();
+        });
+    }
 }
 
