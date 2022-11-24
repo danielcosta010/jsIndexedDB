@@ -85,7 +85,8 @@ class NegociacaoService {
             .then(connection => new NegociacaoDao(connection))
             .then(dao => dao.adiciona(negociacao))
             .then(() => 'Negociacão adicionada com sucesso')
-            .catch(() => {
+            .catch(erro => {
+                console.log(erro);
                 throw new Error ('Não foi possível adicionar a negociação')
             });
     }
@@ -96,6 +97,10 @@ class NegociacaoService {
                 .getConnection()
                 .then(connection => new NegociacaoDao(connection))
                 .then(dao => dao.listaTodos())
+                .catch(erro => {
+                    console.log(erro);
+                    throw new Error('Não foi possível obter as negociações')
+                  })
       }
 }
 
