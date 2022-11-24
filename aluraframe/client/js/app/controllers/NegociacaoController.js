@@ -19,6 +19,8 @@ class NegociacaoController {
             
         this._ordemAtual = '';
 
+        this._service = new NegociacaoService();
+
         this._init();
 
         
@@ -26,7 +28,7 @@ class NegociacaoController {
     
     _init() {
 
-        new NegociacaoService()
+        this._service
             .lista()
             .then(negociacoes =>
                 negociacoes.forEach(negociacao =>
@@ -34,9 +36,9 @@ class NegociacaoController {
             .catch(erro => this._mensagem.texto = erro);
     
     
-            setInterval(() => {
-                this.importaNegociacoes();
-            }, 3000);
+        setInterval(() => {
+            this.importaNegociacoes();
+        }, 3000);
     }
     
     adiciona(event) {
@@ -45,7 +47,7 @@ class NegociacaoController {
 
         let negociacao = this._criaNegociacao();
 
-        new negociacaoService()
+        this._service
             .cadastra(negociacao)
             .then(mensagem => {
                 this._listaNegociacoes.adiciona(negociacao);
@@ -58,25 +60,18 @@ class NegociacaoController {
     
     importaNegociacoes() {
         
-        
-        let service = new NegociacaoService();
-        service
-            .obterNegociacoes()
-            .then(negociacoes => 
-                negociacoes.filter(negociacao =>
-                    !this._listaNegociacoes.negociacoes.some(negociacaoExistente => 
-                        JSON.stringify(negociacao) == JSON.stringify(negociacaoExistente)))
-            )
+        this._service
+            .importa(this._listaNegociacoes.negociacoes)
             .then(negociacoes => negociacoes.forEach(negociacao => {
                 this._listaNegociacoes.adiciona(negociacao);
                 this._mensagem.texto = 'Negociações do período importadas'   
             }))
-            .catch(erro => this._mensagem.texto = erro);               
+            .catch(erro => this._mensagem.texto = erro);                   
     }
     
     apaga() {
 
-            new NegociacaoService()
+            this._service
                 .apaga()
                 .then(mensagem => {
                     this._mensagem.texto = mensagem;
@@ -84,10 +79,6 @@ class NegociacaoController {
                 })
                 .catch(erro => this._mensagem.texto = erro);
         
-
-        
-        this._listaNegociacoes.esvazia();
-        this._mensagem.texto = 'Negociações apagadas com sucesso';
     }
     
     _criaNegociacao() {
@@ -104,5 +95,14 @@ class NegociacaoController {
         this._inputQuantidade.value = 1;
         this._inputValor.value = 0.0;
         this._inputData.focus();   
+    }
+    ordena(coluna) {
+        
+        if(this._ordemAtual == coluna) {
+            this._listaNegociacoes.inverteOrdem(); 
+        } else {
+            this._listaNegociacoes.ordena((p, s) => p[coluna] - s[coluna]);    
+        }
+        this._ordemAtual = coluna;    
     }
 }
